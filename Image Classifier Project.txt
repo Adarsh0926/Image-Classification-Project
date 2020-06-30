@@ -1,0 +1,90 @@
+# importing dependicies
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as pit
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+%matplotlib inline
+
+
+# using pandas to read the database stored in the same folder
+data = pd.read_csv('mnist_train.csv')
+
+
+# viewing column heads
+data.head()
+
+label	1x1	1x2	1x3	1x4	1x5	1x6	1x7	1x8	1x9	...	28x19	28x20	28x21	28x22	28x23	28x24	28x25	28x26	28x27	28x28
+0	5	0	0	0	0	0	0	0	0	0	...	0	0	0	0	0	0	0	0	0	0
+1	0	0	0	0	0	0	0	0	0	0	...	0	0	0	0	0	0	0	0	0	0
+2	4	0	0	0	0	0	0	0	0	0	...	0	0	0	0	0	0	0	0	0	0
+3	1	0	0	0	0	0	0	0	0	0	...	0	0	0	0	0	0	0	0	0	0
+4	9	0	0	0	0	0	0	0	0	0	...	0	0	0	0	0	0	0	0	0	0
+5 rows × 785 columns
+
+
+
+# extracting data from the dataset and viewing them up close
+a = data.iloc[3,1:].values
+# reshaping the extracted data into a reasonable size
+a = a.reshape(28,28).astype('uint8')
+pit.imshow(a)
+
+
+# preaparing the data
+# seperating labels and data values
+df_x = data.iloc[:,1:]
+df_y = data.iloc[:,0]
+
+# creating test and train sizes/batches
+x_train, x_test, y_train, y_test = train_test_split(df_x, df_y, test_size = 0.2, random_state=4)
+
+# check data
+y_train.head()
+
+20379    4
+53032    4
+27005    7
+30510    8
+508      1
+Name: label, dtype: int64
+n_estimators=100
+
+
+# call rf classifier
+rf = RandomForestClassifier(n_estimators=100)
+
+
+# fit the model
+rf.fit(x_train, y_train)
+
+RandomForestClassifier()
+
+
+# predict on test data
+pred = rf.predict(x_test)
+pred
+
+array([2, 7, 6, ..., 6, 4, 2], dtype=int64)
+
+
+# check prediction accuracy
+s = y_test.values
+​
+# calculate number of correctly predicted values
+count = 0
+for i in range(len(pred)):
+    if pred[i] == s[i]:
+        count = count+1
+
+count
+11608
+
+# total values that to predict code was run on
+len(pred)
+12000
+
+
+# accuracy value
+11608/12000
+0.9673333333333334
